@@ -10,7 +10,7 @@ import threading
 
 from cStringIO import StringIO
 import time
-
+from datetime import datetime
 
 import json
 
@@ -177,8 +177,23 @@ class Figure(D3object):
                     .add_attribute("ordinal") \
                     .add_attribute("domain", list(self.data[colname])) \
                     .add_attribute("rangeBands",  [0, width], 0.1)
-                    
-                scale.update({"%s_y"%colname: str(y_range), "%s_x"%colname: str(x_range)})
+                                    
+            elif type(self.data[colname][0]) == datetime:
+                logging.info("using time scale for %s"%colname)
+                # min and max time in milliseconds
+                max_time = time.mktime(max(self.data[colname]).timetuple())*1000
+                min_time = time.mktime(min(self.data[colname]).timetuple())*1000
+                
+                y_range = JS.Object("d3.time") \
+                    .add_attribute("scale") \
+                    .add_attribute("range", [0, height]) \
+                    .add_attribute("domain", [max_time, min_time])
+
+                x_range = JS.Object("d3.time") \
+                    .add_attribute("scale") \
+                    .add_attribute("range", [0, width]) \
+                    .add_attribute("domain", [min_time, max_time])
+
             else:
                 y_range = JS.Object("d3.scale") \
                     .add_attribute("linear") \
@@ -195,7 +210,8 @@ class Figure(D3object):
                     x_range.add_attribute("domain", [0, max(self.data[colname])])
                     y_range.add_attribute("domain", [max(self.data[colname]), 0])
                     
-                scale.update({"%s_y"%colname: str(y_range), "%s_x"%colname: str(x_range)})
+            scale.update({"%s_y"%colname: str(y_range), "%s_x"%colname: str(x_range)})
+            
         return scale
         
 
@@ -252,6 +268,11 @@ class Figure(D3object):
             try:
                 return float(a)
             except ValueError:
+                return a
+            except TypeError:
+                if type(a) == datetime:
+                    return time.mktime(a.timetuple()) * 1000
+
                 return a
 
         d = [
