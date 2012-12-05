@@ -14,7 +14,7 @@ class CustomHTTPRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         because they can get annoying!
         """
         if self.logging:
-            super().log_message(format, *args)
+            super(CustomHTTPRequestHandler).log_message(format, *args)
 
     def do_GET(self):
         """Serve a GET request."""
