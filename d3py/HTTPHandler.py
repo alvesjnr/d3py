@@ -8,13 +8,6 @@ class ThreadedHTTPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
 
 
 class CustomHTTPRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
-    def log_message(self, format, *args):
-        """
-        We get rid of the BaseHTTPRequestHandler logging messages
-        because they can get annoying!
-        """
-        if self.logging:
-            super(CustomHTTPRequestHandler).log_message(format, *args)
 
     def do_GET(self):
         """Serve a GET request."""

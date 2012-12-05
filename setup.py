@@ -3,7 +3,7 @@
 from distutils.core import setup
 
 setup(name='d3py',
-      version='0.1.1',
+      version='0.1.2',
       description='d3py',
       author='Mike Dewar, Micha Gorelick and Adam Laiacano',
       author_email='md@bit.ly',
